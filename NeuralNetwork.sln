@@ -1,0 +1,35 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetworkConsole", "NeuralNetworkConsole\NeuralNetworkConsole.csproj", "{53512789-725E-4EC3-8B78-4308DDA27C9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixLib", "MatrixLib\MatrixLib.csproj", "{A6FAEC36-0D9A-4FC5-AE0E-F5EABDBF0B4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetwork", "NeuralNetwork\NeuralNetwork.csproj", "{A2C9182C-B4BA-47EE-AD90-1C37E3DBFB2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixLib.Test", "MatrixLib.Test\MatrixLib.Test.csproj", "{DCF185DB-3E25-42F4-91FF-2C5408744466}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53512789-725E-4EC3-8B78-4308DDA27C9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53512789-725E-4EC3-8B78-4308DDA27C9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53512789-725E-4EC3-8B78-4308DDA27C9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53512789-725E-4EC3-8B78-4308DDA27C9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6FAEC36-0D9A-4FC5-AE0E-F5EABDBF0B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6FAEC36-0D9A-4FC5-AE0E-F5EABDBF0B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6FAEC36-0D9A-4FC5-AE0E-F5EABDBF0B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6FAEC36-0D9A-4FC5-AE0E-F5EABDBF0B4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2C9182C-B4BA-47EE-AD90-1C37E3DBFB2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2C9182C-B4BA-47EE-AD90-1C37E3DBFB2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2C9182C-B4BA-47EE-AD90-1C37E3DBFB2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2C9182C-B4BA-47EE-AD90-1C37E3DBFB2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCF185DB-3E25-42F4-91FF-2C5408744466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF185DB-3E25-42F4-91FF-2C5408744466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF185DB-3E25-42F4-91FF-2C5408744466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF185DB-3E25-42F4-91FF-2C5408744466}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
