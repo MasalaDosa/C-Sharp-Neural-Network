@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using NeuralNetwork;
@@ -93,6 +94,8 @@ namespace NeuralNetworkConsole
         static void Train(Network network, int epochs = 1)
         {
             Console.WriteLine("Training network...");
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             for (int epoch = 0; epoch < epochs; epoch++)
             {
                 int count = 0;
@@ -120,6 +123,8 @@ namespace NeuralNetworkConsole
                     if (count % 1000 == 0) Console.WriteLine($"{DateTime.Now.ToShortTimeString()} {count} rows trained so far...");
                 }
             }
+            sw.Stop();
+            Console.WriteLine($"Training took {sw.Elapsed.ToString()}.");
             Console.WriteLine();
         }
 

@@ -83,7 +83,6 @@ namespace NeuralNetwork
 
             // Return the final output as an array
             return outputMatrices.Last().Col(0);
-
         }
 
 
@@ -209,6 +208,7 @@ namespace NeuralNetwork
             // If each node has N links into it, then the weight should be between +- 1/Sqrt(N) and should also avoid zero.
             // Number of links coming in is given by the number of neurons coming in - which is the number of columns in this matrix.
             // TODO - Consider a normal distribution
+
             double range = 1.0d / Math.Sqrt(m.NumberOfColumns);
             for (int r = 0; r < m.NumberOfRows; r++)
             {
@@ -313,7 +313,7 @@ namespace NeuralNetwork
                 var result = new Network(learningRate, layerSizes.ToArray());
 
                 foreach(var weights in result._synapseMatrices)
-                {
+                { 
                     for (int r = 0; r < weights.NumberOfRows; r++)
                     {
                         var row = file.ReadLine();

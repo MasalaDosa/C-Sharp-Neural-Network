@@ -1,251 +1,1 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MatrixLib
-{
-    /// <summary>
-    /// A simple, inefficient, matrix class with only the functionality needed to support a simple neural network.
-    /// </summary>
-    public class Matrix
-    {
-        public Matrix(double[,] data)
-        {
-            if (data == null) throw new ArgumentNullException(nameof(data), $"{nameof(data)} is required.");
-            if (data.GetLength(0) < 1 || data.GetLength(1) < 1) throw new ArgumentException(nameof(data), $"{nameof(data)} has zero rows or columns.");
-            Data = data;
-        }
-
-
-        /// <summary>
-        /// Get the underlying Data.
-        /// </summary>
-        public double[,] Data { get; private set; }
-
-
-        /// <summary>
-        /// Number of rows
-        /// </summary>
-        public int NumberOfRows
-        {
-            get
-            {
-                return Data.GetLength(0);
-            }
-        }
-
-
-        /// <summary>
-        /// Number of columns
-        /// </summary>
-        public int NumberOfColumns
-        {
-            get
-            {
-                return Data.GetLength(1);
-            }
-        }
-
-
-        /// <summary>
-        /// Peform a DotProduct inefficiently.
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public Matrix DotProduct(Matrix other)
-        {
-            // The other matrix must exist and be compatible (it should have the same number of rows that we do columns)
-            if (other == null) throw new ArgumentNullException(nameof(other));
-            if (NumberOfColumns != other.NumberOfRows) throw new ArgumentException(nameof(other), $"{nameof(other)} is incompatible for dot product.");
-           
-            // The resulting matrix will have the same number of rows as we do, but the same number of columns that other has.
-            double[,] resultData = new double[NumberOfRows, other.NumberOfColumns];
-
-            // Calculate the resul cells.
-            for (int thisRow = 0; thisRow < Data.GetLength(0); thisRow++)
-            {
-                for (int otherColumn = 0; otherColumn < other.Data.GetLength(1); otherColumn++)
-                {
-                    double total = 0.0d;
-                    for (int thisColumn = 0; thisColumn < Data.GetLength(1); thisColumn++)
-                    {
-
-                        total += this.Data[thisRow, thisColumn] * other.Data[thisColumn, otherColumn];
-                    }
-                    resultData[thisRow, otherColumn] = total;
-                }
-            }
-            return new Matrix(resultData);
-        }
-
-
-        public Matrix Subtract(Matrix other)
-        {
-            // The other matrix must exist and be compatible (it should have the same number of rows and columns)
-            if (other == null) throw new ArgumentNullException(nameof(other));
-            if (this.NumberOfColumns != other.NumberOfColumns || this.NumberOfRows != other.NumberOfRows) throw new ArgumentException(nameof(other), $"{nameof(other)} is incompatible for subtract.");
-
-            double[,] resultData = new double[this.NumberOfRows, this.NumberOfColumns];
-            for (int r = 0; r < this.NumberOfRows; r++)
-            {
-                for (int c = 0; c < this.NumberOfColumns; c++)
-                {
-                    resultData[r, c] = Data[r, c] - other.Data[r, c];
-                }
-            }
-            return new Matrix(resultData);
-        }
-
-
-        public Matrix Add(Matrix other)
-        {
-            // The other matrix must exist and be compatible (it should have the same number of rows and columns)
-            if (other == null) throw new ArgumentNullException(nameof(other));
-            if (this.NumberOfColumns != other.NumberOfColumns || this.NumberOfRows != other.NumberOfRows) throw new ArgumentException(nameof(other), $"{nameof(other)} is incompatible for add.");
-
-            double[,] resultData = new double[this.NumberOfRows, this.NumberOfColumns];
-            for (int r = 0; r < this.NumberOfRows; r++)
-            {
-                for (int c = 0; c < this.NumberOfColumns; c++)
-                {
-                    resultData[r, c] = Data[r, c] + other.Data[r, c];
-                }
-            }
-            return new Matrix(resultData);
-        }
-
-
-        public Matrix CellByCellProduct(Matrix other)
-        {
-            // The other matrix must exist and be compatible (it should have the same number of rows and columns)
-            if (other == null) throw new ArgumentNullException(nameof(other));
-            if (this.NumberOfColumns != other.NumberOfColumns || this.NumberOfRows != other.NumberOfRows) throw new ArgumentException(nameof(other), $"{nameof(other)} is incompatible for cell by cell product.");
-
-            double[,] resultData = new double[this.NumberOfRows, this.NumberOfColumns];
-            for (int r = 0; r < this.NumberOfRows; r++)
-            {
-                for (int c = 0; c < this.NumberOfColumns; c++)
-                {
-                    resultData[r, c] = Data[r, c] * other.Data[r, c];
-                }
-            }
-            return new Matrix(resultData);
-        }
-
-
-        public Matrix Transpose()
-        {
-            var output = new double[this.NumberOfColumns, this.NumberOfRows];
-            for (int i = 0; i < this.NumberOfRows; i++)
-            {
-                for (int j = 0; j < this.NumberOfColumns; j++)
-                {
-                    output[j, i] = this.Data[i, j];
-                }
-            }
-            return new Matrix(output);
-        }
-
-
-        /// <summary>
-        /// Apply a function to each element of the matrix.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public Matrix ApplyFunction(Func<double, double> f)
-        {
-            var output = new double[this.NumberOfRows, this.NumberOfColumns];
-            for (int row = 0; row < this.NumberOfRows; row++)
-            {
-                for (int col = 0; col < this.NumberOfColumns; col++)
-                {
-                    output[row, col] = f(this.Data[row, col]);
-                }
-            }
-            return new Matrix(output);
-        }
-        
-        
-        public Matrix Scale(double min, double max)
-        {
-            return ApplyFunction(d =>
-            {
-                d -= Min();
-                d /= Max() - Min();
-                d *= (max - min);
-                d += min;
-                return d;
-            });
-        }
-
-
-        public double[] Row(int i)
-        {
-            if (i < 0 || i >= NumberOfRows) throw new ArgumentOutOfRangeException(nameof(i));
-            double[] result = new double[NumberOfColumns];
-            for (int c = 0; c < NumberOfColumns; c++)
-            {
-                result[c] = Data[i, c];
-            }
-            return result;
-        }
-
-
-        public double[] Col(int i)
-        {
-            return Transpose().Row(i);
-        }
-
-
-        public double Min()
-        {
-            return Data.Cast<double>().Min();
-        }
-
-
-        public double Max()
-        {
-            return Data.Cast<double>().Max();
-        }
-
-
-        public override string ToString()
-        {
-            StringBuilder result = new StringBuilder();
-            result.AppendLine($"Matrix :{NumberOfRows} rows by {NumberOfColumns} columns");
-            for (int r = 0; r < NumberOfRows; r++)
-            {
-                List<double> currentRow = new List<double>();
-                for (int c = 0; c < NumberOfColumns; c++)
-                {
-                    currentRow.Add(Data[r, c]);
-                }
-                result.AppendLine(string.Join(",\t", currentRow));
-            }
-            return result.ToString();
-        }
-
-
-        public static Matrix OneRowNColFrom1DArray(double[] data)
-        {
-            if (data == null) throw new ArgumentNullException(nameof(data), $"{nameof(data)} is required.");
-            if (data.GetLength(0) < 1) throw new ArgumentException(nameof(data), $"{nameof(data)} has zero elements.");
-            // Build expected matrix - this will be N rows by 1 column
-            double[,] matrixData = new double[1, data.Length];
-            for (int i = 0; i < data.Length; i++)
-            {
-                matrixData[0, i] = data[i];
-            }
-            return new Matrix(matrixData);
-        }
-
-
-        public static Matrix NRow1ColFrom1DArray(double[] data)
-        {
-
-            return OneRowNColFrom1DArray(data).Transpose();
-        }
-    }
-}
+﻿using System; using System.Collections.Generic; using System.Linq; using System.Text; using System.Threading.Tasks;  namespace MatrixLib {     /// <summary>     /// A simple, inefficient, matrix class with only the functionality needed to support a simple neural network.     /// </summary>     public class Matrix     {         public Matrix(double[,] data)         {             if (data == null) throw new ArgumentNullException(nameof(data), $"{nameof(data)} is required.");             if (data.GetLength(0) < 1 || data.GetLength(1) < 1) throw new ArgumentException(nameof(data), $"{nameof(data)} has zero rows or columns.");             Data = data;         }           /// <summary>         /// Get the underlying Data.         /// </summary>         public double[,] Data { get; private set; }           /// <summary>         /// Number of rows         /// </summary>         public int NumberOfRows         {             get             {                 return Data.GetLength(0);             }         }           /// <summary>         /// Number of columns         /// </summary>         public int NumberOfColumns         {             get             {                 return Data.GetLength(1);             }         }          /// <summary>         /// Inefficient matrix multiplication         /// </summary>         /// <returns>The product.</returns>         /// <param name="other">Other.</param>         public unsafe Matrix DotProduct(Matrix other)         {             int otherRows = other.NumberOfRows;             int otherColumns = other.NumberOfColumns;             int thisRows = this.NumberOfRows;             int thisColumns = this.NumberOfColumns;              // The other matrix must exist and be compatible (it should have the same number of rows that we do columns)             if (other == null) throw new ArgumentNullException(nameof(other));             if (thisColumns != otherRows) throw new ArgumentException(nameof(other), $"{nameof(other)} is incompatible for dot product.");              // The resulting matrix will have the same number of rows as we do, but the same number of columns that other has.             double[,] resultData = new double[thisRows, otherColumns];              unsafe             {                fixed (double* pResult = resultData, pThis = this.Data, pOther = other.Data)                {                     int thisRowIdx, otherIdx, resIdx;                     for (int thisRow = 0; thisRow < thisRows; thisRow++)                     {                         thisRowIdx = thisRow * thisColumns;                         resIdx = thisRow * otherColumns;                         for (int otherColumn = 0; otherColumn < otherColumns; otherColumn++)                         {                             otherIdx = otherColumn;                             double total = 0;                             for (int thisColumn = 0; thisColumn < thisColumns; thisColumn++, otherIdx += otherColumns)                             {                                 //total += this.Data[thisRow, thisColumn] * other.Data[thisColumn, otherColumn];                                 total += pThis[thisRowIdx + thisColumn] * pOther[otherIdx];                             }                             pResult[resIdx + otherColumn] = total;                         }                     }                }            }            return new Matrix(resultData);         }           public unsafe Matrix Subtract(Matrix other)         {             int otherRows = other.NumberOfRows;             int otherColumns = other.NumberOfColumns;             int thisRows = this.NumberOfRows;             int thisColumns = this.NumberOfColumns;              // The other matrix must exist and be compatible (it should have the same number of rows and columns)             if (other == null) throw new ArgumentNullException(nameof(other));             if (thisColumns != otherColumns || thisRows != otherRows) throw new ArgumentException(nameof(other), $"{nameof(other)} is incompatible for subtract.");              double[,] resultData = new double[thisRows, thisColumns];              unsafe             {                 fixed (double* pResult = resultData, pThis = this.Data, pOther = other.Data)                 {                     int count = thisRows * thisColumns;                     for (int i = 0; i < count; i++)                     {                           pResult[i] = pThis[i] - pOther[i];                     }                 }             }             return new Matrix(resultData);         }           public unsafe Matrix Add(Matrix other)         {             int otherRows = other.NumberOfRows;             int otherColumns = other.NumberOfColumns;             int thisRows = this.NumberOfRows;             int thisColumns = this.NumberOfColumns;              // The other matrix must exist and be compatible (it should have the same number of rows and columns)             if (other == null) throw new ArgumentNullException(nameof(other));             if (thisColumns != otherColumns || thisRows != otherRows) throw new ArgumentException(nameof(other), $"{nameof(other)} is incompatible for add.");              double[,] resultData = new double[thisRows, thisColumns];             unsafe             {                 fixed (double* pResult = resultData, pThis = this.Data, pOther = other.Data)                 {                     int count = thisRows * thisColumns;                     for (int i = 0; i < count; i++)                     {                         pResult[i] = pThis[i] + pOther[i];                     }                 }             }             return new Matrix(resultData);         }           public unsafe Matrix CellByCellProduct(Matrix other)         {             int otherRows = other.NumberOfRows;             int otherColumns = other.NumberOfColumns;             int thisRows = this.NumberOfRows;             int thisColumns = this.NumberOfColumns;              // The other matrix must exist and be compatible (it should have the same number of rows and columns)             if (other == null) throw new ArgumentNullException(nameof(other));             if (thisColumns != otherColumns || thisRows != otherRows) throw new ArgumentException(nameof(other), $"{nameof(other)} is incompatible for cell by cell product.");              double[,] resultData = new double[thisRows, thisColumns];             unsafe             {                 fixed (double* pResult = resultData, pThis = this.Data, pOther = other.Data)                 {                     int count = thisRows * thisColumns;                     for (int i = 0; i < count; i++)                     {                         pResult[i] = pThis[i] * pOther[i];                     }                 }             }             return new Matrix(resultData);         }           public unsafe Matrix Transpose()         {             int thisRows = this.NumberOfRows;             int thisColumns = this.NumberOfColumns;             var resultData = new double[thisColumns, thisRows];              unsafe             {                 fixed (double* pResult = resultData, pThis = this.Data)                 {                     int i = 0;                     int i2 = 0;                      for (int r = 0; r < thisRows; r++)                     {                         i2 = 0;                         for (int c = 0; c < thisColumns; c++)                         {                             pResult[i2 + r] = pThis[i];                             i++;                             i2 += thisRows;                         }                     }                 }             }             return new Matrix(resultData);         }           /// <summary>         /// Apply a function to each element of the matrix.         /// </summary>         /// <param name="f"></param>         /// <returns></returns>         public unsafe Matrix ApplyFunction(Func<double, double> f)         {             int thisRows = this.NumberOfRows;             int thisColumns = this.NumberOfColumns;             var resultData = new double[thisRows, thisColumns];              unsafe             {                 fixed (double* pResult = resultData, pThis = this.Data)                 {                     int count = thisRows * thisColumns;                     for (int i = 0; i < count; i++)                     {                         pResult[i] = f(pThis[i]);                     }                 }             }              return new Matrix(resultData);         }                           public Matrix Scale(double min, double max)         {             var m_min = Min();             var m_max = Max();             return ApplyFunction(d =>             {                 d -= m_min;                 d /= m_max - m_min;                 d *= (max - min);                 d += min;                 return d;             });         }           public double[] Row(int i)         {             int thisRows = this.NumberOfRows;             int thisColumns = this.NumberOfColumns;              if (i < 0 || i >= thisRows) throw new ArgumentOutOfRangeException(nameof(i));             double[] result = new double[thisColumns];             for (int c = 0; c < thisColumns; c++)             {                 result[c] = Data[i, c];             }             return result;         }           public double[] Col(int i)         {             return Transpose().Row(i);         }           public double Min()         {             return Data.Cast<double>().Min();         }           public double Max()         {             return Data.Cast<double>().Max();         }           public override string ToString()         {             int thisRows = this.NumberOfRows;             int thisColumns = this.NumberOfColumns;             StringBuilder result = new StringBuilder();             result.AppendLine($"Matrix :{ thisRows} rows by { thisColumns} columns");             for (int r = 0; r < thisRows; r++)             {                 List<double> currentRow = new List<double>();                 for (int c = 0; c < thisColumns; c++)                 {                     currentRow.Add(Data[r, c]);                 }                 result.AppendLine(string.Join(",\t", currentRow));             }             return result.ToString();         }           public static Matrix OneRowNColFrom1DArray(double[] data)         {             int dataLength = data.GetLength(0);             if (data == null) throw new ArgumentNullException(nameof(data), $"{ nameof(data)} is required.");             if (dataLength < 1) throw new ArgumentException(nameof(data), $"{ nameof(data)} has zero elements.");             // Build expected matrix - this will be N rows by 1 column             double[,] matrixData = new double[1, dataLength];             for (int i = 0; i < dataLength; i++)             {                 matrixData[0, i] = data[i];             }             return new Matrix(matrixData);         }           public static Matrix NRow1ColFrom1DArray(double[] data)         {             int dataLength = data.GetLength(0);             if (data == null) throw new ArgumentNullException(nameof(data), $"{ nameof(data)} is required.");             if (dataLength < 1) throw new ArgumentException(nameof(data), $"{ nameof(data)} has zero elements.");             // Build expected matrix - this will be N rows by 1 column             double[,] matrixData = new double[dataLength, 1];             for (int i = 0; i < dataLength; i++)             {                 matrixData[i, 0] = data[i];             }             return new Matrix(matrixData);         }     } }  
